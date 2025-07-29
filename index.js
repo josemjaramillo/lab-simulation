@@ -7,12 +7,11 @@ const width = canvas.width;
 const height = canvas.height;
 // console.log(`${width} ${height}`);
 
-
-function drawBall(x, y) {
+function drawBall(x, y, radius=10) {
     ctx.clearRect(0, 0, width, height);
     ctx.beginPath();
     ctx.fillStyle = "red";
-    ctx.arc(x, height - y, 10, 0, Math.PI * 2); // (x, y) centro de bola
+    ctx.arc(x, height - y, radius, 0, Math.PI * 2); // (x, y) centro de bola
     ctx.fill();
 }
 
@@ -28,7 +27,7 @@ const stopButton = document.getElementById("stop");
 stopButton.addEventListener("click", (e) => {
     animationController.stop();
     playButton.textContent = "Play";
-    drawBall(x0, y0)
+    drawBall(x0_canva, y0_canva)
 })
 
 const slowButton = document.getElementById("slow");
@@ -37,15 +36,40 @@ slowButton.addEventListener("click", (e) => {
     slowButton.textContent = animationController.isSlow() ? "Normal" : "Slow";
 })
 
-const x0 = 0;
-const y0 = 0;
-const v0 = 20; // [m/s]
-const angle = 60; // [degrees]
-let [x_array, y_array] = simulate(x0, y0, v0, angle);
+const x0_canva = 10;
+const y0_canva = 10;
+let v0 = 20; // [m/s]
+let angle = 60; // [degrees]
+let [x_array, y_array] = simulate(0, 0, v0, angle);
+
+const inputs = document.querySelectorAll(".param-input");
+inputs.forEach((input) => {
+    input.addEventListener("input", (e) => {
+        console.log(`${e.target.name} = ${e.target.value}`)
+        switch (e.target.name) {
+            case "v0":
+                v0 = Number(e.target.value);
+                break;
+            case "angle":
+                angle = Number(e.target.value);
+                break;
+        
+            default:
+                break;
+        }
+        [x_array, y_array] = simulate(0, 0, v0, angle);
+    })
+})
+
+function scaleWorld2Canvas(x, y){
+    let scale = width / 20; // width[px]/20[m]
+
+    return [x0_canva + x * scale, y0_canva + y * scale]
+}
+
 
 function createAnimation() {
     let i = 0;
-    let scale = width / 20; // width[px]/20[m]
     let slowDelay = 20; // ms (camara lenta)
     let isRunning = false;
     let isSlow = false;
@@ -60,8 +84,7 @@ function createAnimation() {
             return;
         }
 
-        let x = x_array[i] * scale;
-        let y = y_array[i] * scale;
+        let [x, y] = scaleWorld2Canvas(x_array[i], y_array[i])
         drawBall(x, y);
 
         i++;
@@ -83,7 +106,7 @@ function createAnimation() {
             isRunning = false
             i = 0;
         },
-        slow(){
+        slow() {
             isSlow = !isSlow;
         },
         isRunning: () => isRunning,
@@ -92,6 +115,6 @@ function createAnimation() {
 
 }
 
-drawBall(x0, y0)
+drawBall(x0_canva, y0_canva)
 
 

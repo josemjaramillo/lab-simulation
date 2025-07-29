@@ -1,29 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Parabolic movement</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
     <div class="container">
-        <canvas id="mainCanvas" width="1080" height="600">
-        </canvas>
-        <div class="interface">
-            <button id="play">Play</button>
-            <button id="stop">Stop</button>
-            <button id="slow">Slow</button>
-            <input type="text" placeholder="angle">
-            <input type="text" placeholder="vel">
-            <button>Reset</button>
-            <select name="gravity" id="gravity">
-                <option value="earth">Tierra</option>
-                <option value="moon">Luna</option>
-                <option value="mars">Marte</option>
-            </select>
+      <canvas id="mainCanvas" width="1080" height="600"> </canvas>
+      <div class="interface">
+        <div class="buttons-container">
+          <button id="play">Play</button>
+          <button id="stop">Stop</button>
+          <button id="slow">Slow</button>
         </div>
+        <label for="angle">angle</label>
+        <input
+          class="param-input"
+          name="angle"
+          type="number"
+          placeholder="angle"
+          value="60"
+          max="90"
+        />
+        <label for="vel">vel</label>
+        <input
+          class="param-input"
+          name="v0"
+          type="number"
+          placeholder="vel"
+          value="20"
+          max="25"
+        />
+        <button>Reset</button>
+        <select name="gravity" id="gravity">
+          <option value="earth">Tierra</option>
+          <option value="moon">Luna</option>
+          <option value="mars">Marte</option>
+        </select>
+      </div>
     </div>
     <script type="module" src="index.js"></script>
-</body>
+  </body>
 </html>

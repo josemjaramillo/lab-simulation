@@ -47,6 +47,18 @@ export function simulate(x0, y0, v0, angle, g = 9.80665) {
         y.push(y_t);
 
     }
+
+    // Add last point (y = 0)
+    let t = maxTime;
+    let vx_t = vx0 + ax * t;
+    let vy_t = vy0 + ay * t;
+
+    let x_t = x0 + vx_t * t + ax * Math.pow(t, 2) / 2;
+    // let y_t = y0 + vy_t * t + ay * Math.pow(t, 2) / 2; // optional
+
+    x.push(x_t);
+    y.push(0); // Forcing to ground
+
     return [x, y]
 }
 
