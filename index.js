@@ -5,7 +5,7 @@ const ctx = canvas.getContext("2d");
 
 const width = canvas.width;
 const height = canvas.height;
-console.log(`${width} ${height}`);
+// console.log(`${width} ${height}`);
 
 
 function drawBall(x, y) {
@@ -16,17 +16,25 @@ function drawBall(x, y) {
     ctx.fill();
 }
 
-let isPlaying = false;
+const animationController = createAnimation();
 
 const playButton = document.getElementById("play");
 playButton.addEventListener("click", (e) => {
-    startAnimation();
+    animationController.start_pause();
+    playButton.textContent = animationController.isRunning() ? "Pause" : "Play"
 })
 
 const stopButton = document.getElementById("stop");
 stopButton.addEventListener("click", (e) => {
-    isPlaying = false;
+    animationController.stop();
+    playButton.textContent = "Play";
     drawBall(x0, y0)
+})
+
+const slowButton = document.getElementById("slow");
+slowButton.addEventListener("click", (e) => {
+    animationController.slow();
+    slowButton.textContent = animationController.isSlow() ? "Normal" : "Slow";
 })
 
 const x0 = 0;
@@ -35,14 +43,22 @@ const v0 = 20; // [m/s]
 const angle = 60; // [degrees]
 let [x_array, y_array] = simulate(x0, y0, v0, angle);
 
-function startAnimation() {
+function createAnimation() {
     let i = 0;
     let scale = width / 20; // width[px]/20[m]
-    let delay = 0; // ms (camara lenta)
-    isPlaying = true;
+    let slowDelay = 20; // ms (camara lenta)
+    let isRunning = false;
+    let isSlow = false;
 
     function animateTrajectory() {
-        if (i >= x_array.length && isPlaying) return;
+
+        if (!isRunning) return;
+        if (i >= x_array.length) {
+            isRunning = false;
+            i = 0;
+            playButton.textContent = "Play"; // desacoplar
+            return;
+        }
 
         let x = x_array[i] * scale;
         let y = y_array[i] * scale;
@@ -51,9 +67,28 @@ function startAnimation() {
         i++;
         setTimeout(() => {
             requestAnimationFrame(animateTrajectory); // animacion fluida
-        }, delay);
+        }, isSlow ? slowDelay : 0);
     }
-    animateTrajectory();
+
+    return {
+        start_pause() {
+            if (!isRunning) {
+                isRunning = true;
+                animateTrajectory()
+            } else {
+                isRunning = false
+            }
+        },
+        stop() {
+            isRunning = false
+            i = 0;
+        },
+        slow(){
+            isSlow = !isSlow;
+        },
+        isRunning: () => isRunning,
+        isSlow: () => isSlow
+    }
 
 }
 
