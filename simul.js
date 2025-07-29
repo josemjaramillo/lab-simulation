@@ -1,15 +1,10 @@
-const g = 9.80665;
 
-const x0 = 0;
-const y0 = 0;
-const v0 = 20; // [m/s]
-const angle = 60; // [degrees]
-const vx0 = v0 * Math.cos(angle * (Math.PI / 180));
-const vy0 = v0 * Math.sin(angle * (Math.PI / 180));
-const ax = 0;
-const ay = -g;
-const maxTime = calc_Yequal0(ay, vy0, y0);
-const dt = 0.01
+
+// const x0 = 0;
+// const y0 = 0;
+// const v0 = 20; // [m/s]
+// const angle = 60; // [degrees]
+
 
 function eqRoots(a, b, c) {
     let dis = Math.pow(b, 2) - 4 * a * c;
@@ -29,19 +24,25 @@ function calc_Yequal0(ay, vy0, y0) {
     return ans;
 }
 
-export function simulate(){
+export function simulate(x0, y0, v0, angle, g = 9.80665) {
+    const vx0 = v0 * Math.cos(angle * (Math.PI / 180));
+    const vy0 = v0 * Math.sin(angle * (Math.PI / 180));
+    const ax = 0;
+    const ay = -g;
+    const maxTime = calc_Yequal0(ay, vy0, y0);
+    const dt = 0.01
     let x = [];
     let y = [];
-    
+
     for (let t = 0; t < maxTime; t += dt) {
         //  Velocity calculation
         let vx_t = vx0 + ax * t;
         let vy_t = vy0 + ay * t;
-    
+
         // Position calculation
         let x_t = x0 + vx_t * t + ax * Math.pow(t, 2) / 2;
         let y_t = y0 + vy_t * t + ay * Math.pow(t, 2) / 2;
-    
+
         x.push(x_t);
         y.push(y_t);
 
