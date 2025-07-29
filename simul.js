@@ -2,8 +2,8 @@ const g = 9.80665;
 
 const x0 = 0;
 const y0 = 0;
-const v0 = 20;
-const angle = 60;
+const v0 = 20; // [m/s]
+const angle = 60; // [degrees]
 const vx0 = v0 * Math.cos(angle * (Math.PI / 180));
 const vy0 = v0 * Math.sin(angle * (Math.PI / 180));
 const ax = 0;
