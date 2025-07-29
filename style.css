@@ -9,3 +9,15 @@ body{
 #mainCanvas{
     background-color: white;
 }
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+}
+
+.interface {
+
+    /* align-self: start; */
+    padding: 10px 10px 10px 0;
+}
