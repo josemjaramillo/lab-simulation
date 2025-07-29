@@ -20,7 +20,7 @@ function eqRoots(a, b, c) {
 function calc_Yequal0(ay, vy0, y0) {
     let [t1, t2] = eqRoots(3 / 2 * ay, vy0, y0);
     let ans = t1 > 0 ? t1 : t2;
-    console.log(t1, t2);
+    // console.log(t1, t2);
     return ans;
 }
 

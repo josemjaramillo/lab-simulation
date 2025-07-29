@@ -5,13 +5,39 @@ const ctx = canvas.getContext("2d");
 
 const width = canvas.width;
 const height = canvas.height;
-// console.log(`${width} ${height}`);
 
-function drawBall(x, y, radius=10) {
+// coordenadas del canvas
+const x0_canva = 10;
+const y0_canva = 0; // cero es el borde
+
+// parametros variables
+let v0 = 20; // [m/s]
+let angle = 60; // [degrees]
+let gravity = 9.80665;
+
+const DEFAULTS = {
+    v0: 20,
+    angle: 60,
+    gravity: "earth"
+};
+
+const gravityList = {
+    earth: 9.80665,
+    moon: 1.6249,
+    mars: 3.72076
+}
+
+const [x0_simul, y0_simul] = pixelsToMeters(x0_canva, y0_canva); // conversion de coordenadas a metros (no se cambian)
+let [x_array, y_array] = simulate(x0_simul, y0_simul, v0, angle, 9.80665); // simulacion
+drawBall(x0_canva, y0_canva)
+
+// Se dibuja el centro de la bola desplazado +radius px hacia arriba
+// para que la base toque el suelo (y = 0 física).
+function drawBall(x, y, radius = 10) {
     ctx.clearRect(0, 0, width, height);
     ctx.beginPath();
     ctx.fillStyle = "red";
-    ctx.arc(x, height - y, radius, 0, Math.PI * 2); // (x, y) centro de bola
+    ctx.arc(x, height - (y + radius), radius, 0, Math.PI * 2);
     ctx.fill();
 }
 
@@ -36,16 +62,29 @@ slowButton.addEventListener("click", (e) => {
     slowButton.textContent = animationController.isSlow() ? "Normal" : "Slow";
 })
 
-const x0_canva = 10;
-const y0_canva = 10;
-let v0 = 20; // [m/s]
-let angle = 60; // [degrees]
-let [x_array, y_array] = simulate(0, 0, v0, angle);
+const resetButton = document.getElementById("reset");
+resetButton.addEventListener("click", (e) => {
+    inputs.forEach(input => {
+        const name = input.name;
+        if (DEFAULTS.hasOwnProperty(name)) {
+            input.value = DEFAULTS[name]
+        }
+    })
+
+    v0 = 20;
+    angle = 60;
+    gravity = 9.80665;
+
+    [x_array, y_array] = simulate(x0_simul, y0_simul, v0, angle, gravity);
+
+    drawBall(x0_canva, y0_canva)
+})
 
 const inputs = document.querySelectorAll(".param-input");
 inputs.forEach((input) => {
     input.addEventListener("input", (e) => {
-        console.log(`${e.target.name} = ${e.target.value}`)
+        const { name, value } = e.target;
+
         switch (e.target.name) {
             case "v0":
                 v0 = Number(e.target.value);
@@ -53,18 +92,25 @@ inputs.forEach((input) => {
             case "angle":
                 angle = Number(e.target.value);
                 break;
-        
+            case "gravity":
+                gravity = gravityList[e.target.value]
+                break;
+
             default:
                 break;
         }
-        [x_array, y_array] = simulate(0, 0, v0, angle);
+        [x_array, y_array] = simulate(x0_simul, y0_simul, v0, angle, gravity);
     })
 })
 
-function scaleWorld2Canvas(x, y){
-    let scale = width / 20; // width[px]/20[m]
+function metersToPixels(x, y) {
+    const scale = width / 20;
+    return [x * scale, y * scale];
+}
 
-    return [x0_canva + x * scale, y0_canva + y * scale]
+function pixelsToMeters(x, y) {
+    const scale = width / 20;
+    return [x / scale, y / scale];
 }
 
 
@@ -84,7 +130,7 @@ function createAnimation() {
             return;
         }
 
-        let [x, y] = scaleWorld2Canvas(x_array[i], y_array[i])
+        let [x, y] = metersToPixels(x_array[i], y_array[i])
         drawBall(x, y);
 
         i++;
@@ -115,6 +161,6 @@ function createAnimation() {
 
 }
 
-drawBall(x0_canva, y0_canva)
+
 
 
