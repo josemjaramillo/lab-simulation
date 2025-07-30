@@ -9,27 +9,33 @@ const height = canvas.height;
 // coordenadas del canvas
 const x0_canva = 10;
 const y0_canva = 0; // cero es el borde
+const [x0_simul, y0_simul] = pixelsToMeters(x0_canva, y0_canva); // conversion de coordenadas a metros
 
 // parametros variables
-let v0 = 20; // [m/s]
-let angle = 60; // [degrees]
-let gravity = 9.80665;
+let v0, angle, g, x_array, y_array;
 
-const DEFAULTS = {
-    v0: 20,
-    angle: 60,
-    gravity: "earth"
-};
+function resetAll() {
+    v0 = 20; // [m/s]
+    angle = 60; // [degrees]
+    g = 9.80665;
+
+    [x_array, y_array] = simulate(x0_simul, y0_simul, v0, angle, g); // simulacion
+    drawBall(x0_canva, y0_canva)
+
+    return ({
+        v0: 20,
+        angle: 60,
+        gravity: "earth"
+    })
+}
+
+resetAll();
 
 const gravityList = {
     earth: 9.80665,
     moon: 1.6249,
     mars: 3.72076
 }
-
-const [x0_simul, y0_simul] = pixelsToMeters(x0_canva, y0_canva); // conversion de coordenadas a metros (no se cambian)
-let [x_array, y_array] = simulate(x0_simul, y0_simul, v0, angle, 9.80665); // simulacion
-drawBall(x0_canva, y0_canva)
 
 // Se dibuja el centro de la bola desplazado +radius px hacia arriba
 // para que la base toque el suelo (y = 0 física).
@@ -64,20 +70,13 @@ slowButton.addEventListener("click", (e) => {
 
 const resetButton = document.getElementById("reset");
 resetButton.addEventListener("click", (e) => {
+    const DEFAULTS = resetAll();
     inputs.forEach(input => {
         const name = input.name;
         if (DEFAULTS.hasOwnProperty(name)) {
             input.value = DEFAULTS[name]
         }
     })
-
-    v0 = 20;
-    angle = 60;
-    gravity = 9.80665;
-
-    [x_array, y_array] = simulate(x0_simul, y0_simul, v0, angle, gravity);
-
-    drawBall(x0_canva, y0_canva)
 })
 
 const inputs = document.querySelectorAll(".param-input");
@@ -85,21 +84,22 @@ inputs.forEach((input) => {
     input.addEventListener("input", (e) => {
         const { name, value } = e.target;
 
-        switch (e.target.name) {
+        
+        switch (name) {
             case "v0":
-                v0 = Number(e.target.value);
+                v0 = Number(value);
                 break;
             case "angle":
-                angle = Number(e.target.value);
+                angle = Number(value);
                 break;
             case "gravity":
-                gravity = gravityList[e.target.value]
+                g = gravityList[value]
                 break;
 
             default:
                 break;
         }
-        [x_array, y_array] = simulate(x0_simul, y0_simul, v0, angle, gravity);
+        [x_array, y_array] = simulate(x0_simul, y0_simul, v0, angle, g);
     })
 })
 
