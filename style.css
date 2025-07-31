@@ -1,0 +1,27 @@
+body{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: black;
+}
+
+#mainCanvas{
+    background-color: white;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    background-color: aqua;
+}
+
+.interface {
+    /* align-self: start; */
+    padding: 10px;
+}
+
+.buttons-container{
+    display: inline-block;
+}
