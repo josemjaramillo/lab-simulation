@@ -3,16 +3,29 @@ import { simulate } from "./simul.js";
 const canvas = document.querySelector("#mainCanvas");
 const ctx = canvas.getContext("2d");
 
-const width = canvas.width;
-const height = canvas.height;
+// parametros variables
+let v0, angle, g, x_array, y_array;
+
+let width = canvas.width;
+let height = canvas.height;
 
 // coordenadas del canvas
-const x0_canva = 10;
+const x0_canva = 0;
 const y0_canva = 0; // cero es el borde
 const [x0_simul, y0_simul] = pixelsToMeters(x0_canva, y0_canva); // conversion de coordenadas a metros
 
-// parametros variables
-let v0, angle, g, x_array, y_array;
+function resizeCanvas() {
+    // console.log(canvas.clientWidth, canvas.clientHeight)
+    // Obtener tamaño visual actual e Igualar tamaño interno para evitar distorsión
+    canvas.width = canvas.clientWidth;
+    canvas.height = canvas.clientWidth/1.8; // 1080/600 aspect ratio
+    width = canvas.width;
+    height = canvas.height;
+
+    drawBall(x0_canva, y0_canva); // tu función para redibujar la bola u otros elementos
+}
+window.addEventListener('resize', resizeCanvas);
+window.addEventListener('load', resizeCanvas);
 
 function resetAll() {
     v0 = 20; // [m/s]
@@ -37,13 +50,13 @@ const gravityList = {
     mars: 3.72076
 }
 
-// Se dibuja el centro de la bola desplazado +radius px hacia arriba
+// Se dibuja el centro de la bola desplazado + radius [px] hacia arriba y la derecha
 // para que la base toque el suelo (y = 0 física).
 function drawBall(x, y, radius = 10) {
     ctx.clearRect(0, 0, width, height);
     ctx.beginPath();
     ctx.fillStyle = "red";
-    ctx.arc(x, height - (y + radius), radius, 0, Math.PI * 2);
+    ctx.arc(x + radius, height - (y + radius), radius, 0, Math.PI * 2);
     ctx.fill();
 }
 
@@ -84,7 +97,7 @@ inputs.forEach((input) => {
     input.addEventListener("input", (e) => {
         const { name, value } = e.target;
 
-        
+
         switch (name) {
             case "v0":
                 v0 = Number(value);
